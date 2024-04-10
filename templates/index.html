@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bankist</title>
+    {%load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    
+</head>
+<body>
+  <!-- Navigation Bar with Login -->
+  <nav>
+    <p class ='welcome'>Welcome {{user_data.name}}</p>
+    <!-- Image will be added soon -->
+  <form class="login" action="{% url 'single_page_functionality' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="login">
+    <input type="text" class="login__input login__input--user" name="username"placeholder="user"><br>
+    <input type="password" class="login__input login__input--pin" name="pin"placeholder="PIN"><br><br>
+    <input type="submit" value="Login" class="login__btn">
+</form>
+</nav>
+    <div class="app" id="app">
+      <!-- Showing the balance -->
+      <div class="balance">
+        <div>
+          <p class="balance__label">Current balance</p>
+          <p class="balance__date">
+            As of <span class="date">05/03/2037</span>
+          </p>
+        </div>
+        <p class="balance__value">{{ user_data.balance }}</p>
+      </div>  
+
+      <!-- Displaying the movements -->
+      <div class ='movements'>
+        <!-- <div class="movements__row"> -->
+        <!-- movement type -->
+        <div class="movements__value">
+          <h1>Movements</h1>
+          {% for movement in user_data.movements %}
+          <ul>{{ movement }}</ul>
+          {% endfor %}
+        </div>
+      </div>
+      
+       <!-- SUMMARY -->
+       <div class="summary">
+        <p class="summary__label">In</p>
+        <p class="summary__value summary__value--in">{{ user_data.total_incomes }}</p>
+        <p class="summary__label">Out</p>
+        <p class="summary__value summary__value--out">{{ user_data.total_outgoing }}</p>
+        <p class="summary__label">Interest</p>
+        <p class="summary__value summary__value--interest">{{ user_data.interest_earned }}</p>
+        <button class="btn--sort">&downarrow; SORT</button>
+      </div>
+      <!-- OPERATION: TRANSFERS -->
+      <div>
+        <form class="operation operation--transfer"id="transferForm" action="{% url 'single_page_functionality' %}" method="post">
+          {% csrf_token %}
+          <h2>Transfer money</h2>
+          <input type="hidden" name="action" value="transfer">
+            <label class="form__label" for="recipient">Transfer to</label><br>
+            <input type="text" id="recipient" name="recipient" class="form__input form__input--to"><br>
+            <label for="amount"  class="form__label">Amount:</label><br>
+            <input type="number" class="form__input form__input--amount"  id="amount" name="amount"><br><br>
+            <input type="hidden" name="username" value="{{ user_data.name }}">
+            <input class="form__btn "type="submit" value="Transfer">
+        </form>
+        </div>
+      <!-- OPERATION: LOAN -->
+      <div>
+        
+        <form class="operation operation--loan"id="loanForm" action="{% url 'single_page_functionality' %}" method="post">
+          {% csrf_token %}
+          <h2>Request Loan</h2>
+          <input type="hidden" name="action" value="loan">
+          <label for="loan_amount" class="form__label form__label--loan">Amount</label><br>
+          <input type="number" id="loan_amount" name="loan_amount" class="form__input form__input--loan-amount" ><br><br>
+          <input type="hidden" name="username" value="{{ user_data.name }}">
+          <input type="submit" value="Request Loan" class="form__btn form__btn--loan">
+      </form>
+      </div>
+      <!-- OPERATION: CLOSE -->
+      <div>
+        <form class="operation operation--close"id="closeAccountForm" action="{% url 'single_page_functionality' %}" method="post">
+          {% csrf_token %}
+          <h2>Close Account</h2>
+          <input type="hidden" name="action" value="close_account">
+          <label class="form__label"for="close_username">Confirm user</label><br>
+          <input class="form__input form__input--user"type="text" id="close_username" name="username"><br>
+          <label class="form__label"for="close_pin">Confirm PIN</label><br>
+          <input class="form__input form__input--pin"type="password" id="close_pin" name="pin"><br><br>
+          <input class="form__btn form__btn--loan"type="submit" value="Close Account">
+      </form>
+      </div>
+
+        <!-- LOGOUT TIMER -->
+      <p class="logout-timer">
+        You will be logged out in <span class="timer">05:00</span>
+      </p>
+    </div>
+</body>
+</html>
